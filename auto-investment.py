@@ -32,6 +32,10 @@ code_list = [
     "9433",
 ]
 
+#保存先ファイル・シート名
+    file_path = r"C:\Users\Kutinasi\Desktop\投資\ポートフォリオ管理表(自動).xlsx"
+    sheet_name = "日本株管理表"
+
 item = []
 
 # クローリング可能かチェック
@@ -42,11 +46,10 @@ def check_crawling(url):
     result = ur.can_fetch("*", url)
     return result
 
-
 # スクレイピングの実行
-def scraping(url, b):
+def scraping(url, code):
     # 証券番号を最初に追加する
-    item_list = [b]
+    item_list = [code]
 
     response = requests.get(url)
     soup = BeautifulSoup(response.content, "html.parser")
@@ -82,10 +85,6 @@ def create_csv(item):
 
 # csvをExcelファイルに出力
 def invet_xls():
-    #保存先ファイル・シート名
-    file_path = r"C:\Users\Kutinasi\Desktop\投資\ポートフォリオ管理表(自動).xlsx"
-    sheet_name = "日本株管理表"
-
     date = datetime.datetime.now()
 
     # ファイルを開く
@@ -105,13 +104,13 @@ def invet_xls():
     book.save(file_path)
 
 # 全ての証券番号の情報を抜き出す
-for b in code_list:
+for code in code_list:
     # 指定した証券番号のURLを作成
-    url = basic_url + b
+    url = basic_url + code
     if check_crawling(url):
         # 証券番号、株価、配当金をリストに追加
-        item.append(scraping(url, b))
-        print(b + "抽出完了")
+        item.append(scraping(url, code))
+        print(code + "抽出完了")
         time.sleep(2)
     else:
         print("このページはクローリング禁止です")
